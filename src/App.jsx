@@ -47,7 +47,6 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(20);
   const [isAnimating, setIsAnimating] = useState(false);
   const [matchedCount, setMatchedCount] = useState(0);
-  const [showCountdown, setShowCountdown] = useState(true);
 
   // Start new game
   const handleStartNewGame = () => {
@@ -82,15 +81,14 @@ function App() {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
-          handleTimeExpired();
-          return 15;
+          return 20; // Reset timer, handleTimeExpired will be called via GameBoard prop
         }
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [gameState, currentPlayerIndex]);
+  }, [gameState]);
 
   // Handle card click
   const handleCardClick = (cardId) => {
@@ -178,8 +176,7 @@ function App() {
       // Pass turn to next player
       const nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
       setCurrentPlayerIndex(nextPlayerIndex);
-      setShowCountdown(true);
-      setGameState('countdown');
+      setTimeLeft(20); // Reset timer for next player's turn
     }
   };
 
