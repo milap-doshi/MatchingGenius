@@ -18,12 +18,28 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow: hidden;
+  height: 100vh;
+}
+
 body {
   background: linear-gradient(135deg, var(--bg-darker) 0%, #1a1f3a 100%);
   color: #f1f5f9;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow: hidden;
   min-height: 100vh;
+  height: 100vh;
+}
+
+/* Hide scrollbars but keep scroll functionality if needed */
+::-webkit-scrollbar {
+  display: none;
+}
+
+body, body * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 #root {

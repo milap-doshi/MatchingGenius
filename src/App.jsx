@@ -79,16 +79,19 @@ function App() {
     if (gameState !== 'playing') return;
 
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          return 20; // Reset timer, handleTimeExpired will be called via GameBoard prop
-        }
-        return prev - 1;
-      });
+      setTimeLeft(prev => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
   }, [gameState]);
+
+  // Handle timer expiration
+  useEffect(() => {
+    if (gameState === 'playing' && timeLeft <= 0) {
+      handleTimeExpired();
+      setTimeLeft(20); // Reset timer for next player's turn
+    }
+  }, [timeLeft, gameState]);
 
   // Handle card click
   const handleCardClick = (cardId) => {
@@ -189,28 +192,39 @@ function App() {
   }, [matchedCount, gameState, boardSize]);
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 flex items-center justify-center">
-      {gameState === 'landing' && <LandingPage onStart={handleStartNewGame} />}
-      {gameState === 'difficulty' && <DifficultyScreen onSelectDifficulty={handleSelectDifficulty} />}
-      {gameState === 'setup' && <PlayerSetup onPlayersReady={handlePlayersReady} />}
-      {gameState === 'playing' && (
-        <div className="w-full h-screen flex flex-col">
-          <GameBoard
-            board={board}
-            onCardClick={handleCardClick}
-            currentPlayer={players[currentPlayerIndex]}
-            allPlayers={players}
-            timeLeft={timeLeft}
-            onTimeExpired={handleTimeExpired}
-            isAnimating={isAnimating}
-            boardSize={boardSize}
-          />
+    <>
+      {gameState === 'landing' && (
+        <div className="w-screen h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 flex items-center justify-center">
+          <LandingPage onStart={handleStartNewGame} />
         </div>
       )}
-      {gameState === 'gameover' && (
-        <GameOverScreen players={players} onPlayAgain={handleStartNewGame} />
+      {gameState === 'difficulty' && (
+        <div className="w-screen h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 flex items-center justify-center">
+          <DifficultyScreen onSelectDifficulty={handleSelectDifficulty} />
+        </div>
       )}
-    </div>
+      {gameState === 'setup' && (
+        <div className="w-screen h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 flex items-center justify-center">
+          <PlayerSetup onPlayersReady={handlePlayersReady} />
+        </div>
+      )}
+      {gameState === 'playing' && (
+        <GameBoard
+          board={board}
+          onCardClick={handleCardClick}
+          currentPlayer={players[currentPlayerIndex]}
+          allPlayers={players}
+          timeLeft={timeLeft}
+          isAnimating={isAnimating}
+          boardSize={boardSize}
+        />
+      )}
+      {gameState === 'gameover' && (
+        <div className="w-screen h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-purple-950 flex items-center justify-center">
+          <GameOverScreen players={players} onPlayAgain={handleStartNewGame} />
+        </div>
+      )}
+    </>
   );
 }
 
